@@ -35,8 +35,68 @@
 \usepackage{needspace} % for avoiding page brake right after the section title
 \usepackage{iftex} % check if engine is pdflatex, xetex or luatex
 
+%%%%%%%%%%%%%%%%%%%%
+% 右上角角标日期设置
+%%%%%%%%%%%%%%%%%%%%
 \usepackage[en-US]{datetime2}
 \DTMsetup{useregional}  % 设置日期格式为美国英语
+
+%%%%%%%%%%%%%%%%%%%%%
+% 自动参考文献列表设置
+%%%%%%%%%%%%%%%%%%%%%
+\usepackage[UTF8]{ctex}  % 加载 ctex 宏包，支持中文
+\usepackage[
+    backend=biber,       % 使用 biber 后端
+    style=authoryear,    % Author-Year 引用样式
+    dashed=false,        % 禁止重复作者用横线代替
+    doi=true,            % 显示 DOI
+    url=false,           % 不显示 URL（除非没有 DOI）
+    maxbibnames=10,      % 显示所有作者
+    giveninits=true,     % 缩写名字
+    sorting=ydnt,        % 按年份降序排序(新->旧)
+    date=year,           % 默认只显示年份
+]{biblatex}
+
+% 加粗和下划线自己的名字 
+\DeclareNameFormat{highlight}{%
+  \nameparts{#1}% 确保姓名解析
+  \ifboolexpr{
+    test {\ifdefstring{\namepartfamily}{Wang}} 
+    and 
+    test {\ifdefstring{\namepartgiven}{Haozhou}}
+  }
+    {\textbf{\underline{\namepartfamily\addcomma\space\namepartgiveni}} }   % 加粗且缩写
+    {\namepartfamily\addcomma\space\namepartgiveni}%           % 正常缩写
+  % 修复方案：完整保留多作者分隔逻辑
+  \ifthenelse{\value{listcount}<\value{liststop}}
+    {\addcomma\space}
+    {}%
+  \usebibmacro{name:andothers} % 关键：保留多作者分隔逻辑
+}
+% 应用上述逻辑
+\DeclareNameAlias{author}{highlight}
+\DeclareNameAlias{editor}{highlight}
+\DeclareNameAlias{translator}{highlight}
+
+% 标题不添加引号
+\DeclareFieldFormat[article]{title}{#1}
+\DeclareFieldFormat[report]{title}{#1}
+\DeclareFieldFormat[incollection]{title}{#1}
+
+% 加载 BibLaTeX 文件% 自定义分类标题格式（可选）
+\addbibresource{publications.bib} 
+
+% 定义计数器，统计发表论文数量
+\newcounter{bookchapcount}
+\newcounter{journalcount}
+\newcounter{confcount}
+
+% 在打印文献前统计数量
+\AtDataInput{%
+  \ifentrytype{incollection}{\stepcounter{bookchapcount}}{}%
+  \ifentrytype{article}{\stepcounter{journalcount}}{}%
+  \ifentrytype{report}{\stepcounter{confcount}}{}%
+}
 
 % Ensure that generate pdf is machine readable/ATS parsable:
 \ifPDFTeX
@@ -57,7 +117,7 @@
 \makeatletter
 \let\ps@customFooterStyle\ps@plain % Copy the plain style to customFooterStyle
 \patchcmd{\ps@customFooterStyle}{\thepage}{
-    \color{gray}\textit{\small John Doe - Page \thepage{} of \pageref*{LastPage}}
+    \color{gray}\textit{\small Haozhou Wang - Page \thepage{} of \pageref*{LastPage}}
 }{}{} % replace number by desired string
 \makeatother
 \pagestyle{customFooterStyle}
@@ -114,7 +174,7 @@
 \newenvironment{twocolentry}[2][]{
     \onecolentry
     \def\secondColumn{#2}
-    \setcolumnwidth{\fill, 10.5 cm}
+    \setcolumnwidth{\fill, 4.5 cm}
     \begin{paracol}{2}
 }{
     \switchcolumn \raggedleft \secondColumn
@@ -127,6 +187,10 @@
 }{
     \par\kern\topsep
 } % new environment for the header
+
+%%%%%%%%%%%%%%%%%%%%
+% 右上角角标日期设置
+%%%%%%%%%%%%%%%%%%%%
 
 % 自定义日期格式为 "Sept. 2024" 样式
 \newcommand{\customdate}{%
@@ -171,10 +235,10 @@
         Graduate School of Agricultural and Life Sciences, The University of Tokyo.
 
         \normalsize
-        \mbox{{\color{black}\footnotesize\faMapMarker*}\hspace*{0.13cm}Tokyo, Japan}%
-        \kern 0.25 cm%
-        \AND%
-        \kern 0.25 cm%
+        % \mbox{{\color{black}\footnotesize\faMapMarker*}\hspace*{0.13cm}Tokyo, Japan}%
+        % \kern 0.25 cm%
+        % \AND%
+        % \kern 0.25 cm%
         \mbox{\hrefWithoutArrow{mailto:haozhou-wang@outlook.com}{\color{black}{\footnotesize\faEnvelope[regular]}\hspace*{0.13cm}haozhou-wang@outlook.com}}%
         \kern 0.25 cm%
         % \AND%
@@ -185,43 +249,73 @@
         \kern 0.25 cm%
         \mbox{\hrefWithoutArrow{https://www.haozhou.wang/}{\color{black}{\footnotesize\faLink}\hspace*{0.13cm}haozhou.wang}}%
         \kern 0.25 cm%
-        \AND%
-        \kern 0.25 cm%
-        \mbox{\hrefWithoutArrow{https://www.linkedin.com/in/haozhouwang/}{\color{black}{\footnotesize\faLinkedinIn}\hspace*{0.13cm}haozhouwang}}%
-        \kern 0.25 cm%
+        % \AND%
+        % \kern 0.25 cm%
+        % \mbox{\hrefWithoutArrow{https://www.linkedin.com/in/haozhouwang/}{\color{black}{\footnotesize\faLinkedinIn}\hspace*{0.13cm}haozhouwang}}%
+        % \kern 0.25 cm%
         \AND%
         \kern 0.25 cm%
         \mbox{\hrefWithoutArrow{https://github.com/HowcanoeWang}{\color{black}{\footnotesize\faGithub}\hspace*{0.13cm}HowcanoeWang}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://scholar.google.com/citations?user=CnTTa3EAAAAJ}{\color{black}{\footnotesize\faGraduationCap}\hspace*{0.13cm}286 citations, h-index 8}}%
     \end{header}
 
     \vspace{0.3 cm - 0.3 cm}
 
-    % \section{Welcome to RenderCV!}
-
-        
-    %     \begin{onecolentry}
-    %         \href{https://rendercv.com}{RenderCV} is a LaTeX-based CV/resume version-control and maintenance app. It allows you to create a high-quality CV or resume as a PDF file from a YAML file, with \textbf{Markdown syntax support} and \textbf{complete control over the LaTeX code}.
-    %     \end{onecolentry}
-
-    %     \vspace{0.2 cm}
-
-    %     \begin{onecolentry}
-    %         The boilerplate content was inspired by \href{https://github.com/dnl-blkv/mcdowell-cv}{Gayle McDowell}.
-    %     \end{onecolentry}
-
     \section{Research Interests}
 
-    \begin{onecolentry}
-        \begin{highlightsforbulletentries}
+        \begin{onecolentry}
+            \begin{highlightsforbulletentries}
 
-        \item High-throughput plant 3D phenotyping.
+            \item High-throughput plant 3D phenotyping.
 
-        \item Digital twin virtual plant model and multi-sensory data fusion.
+            \item Digital twin virtual plant model and multi-sensory data fusion.
 
-        \item Open-source agricultural phenotyping tool and dataset development.
+            \item Open-source agricultural phenotyping tool and dataset development.
 
-        \end{highlightsforbulletentries}
-    \end{onecolentry}
+            \end{highlightsforbulletentries}
+        \end{onecolentry}
+
+    \section{Professional Positions}
+        
+        \begin{twocolentry}{
+            \textit{Tokyo, Japan}    
+            
+            \textit{Oct 2023 – present}}
+            \textbf{Project Research Assistant}
+            
+            \textit{The University of Tokyo}
+        \end{twocolentry}
+
+        \vspace{0.10 cm}
+        \begin{onecolentry}
+            \begin{highlights}
+                \item Focused on 3D-based plant phenotyping by multi-scale data fusion.
+            \end{highlights}
+        \end{onecolentry}
+
+
+        % \vspace{0.2 cm}
+
+        % \begin{twocolentry}{
+        % \textit{Beijing, China}    
+            
+        % \textit{May 2016 – Aug 2016}}
+        %     \textbf{Research Student Intern}
+            
+        %     \textit{Chinese Academy of Forestry}
+        % \end{twocolentry}
+
+        % \vspace{0.10 cm}
+        % \begin{onecolentry}
+        %     \begin{highlights}
+        %         \item Developed software and website for UAV image analysis, named UAV-HiRAP (\href{https://www.uav-hirap.org}{www.uav-hirap.org}).
+        %         \item Extended to an oral presentation on the 12th International Congress of Ecological.
+        %         \item One publication on top journal Agricultural and Forest Meteorology.
+        %     \end{highlights}
+        % \end{onecolentry}
 
 
     \section{Education}
@@ -235,10 +329,11 @@
 
         \vspace{0.10 cm}
         \begin{onecolentry}
-            \begin{highlights}
-                % \item GPA: 3.9/4.0 (\href{https://example.com}{a link to somewhere})
-                \item \textbf{Thesis Title:} Studies on 3D-based plant phenotyping by multi-scale data fusion.
-            \end{highlights}
+            \underline{Thesis title:} Studies on 3D-based plant phenotyping by multi-scale data fusion.
+            % \begin{highlights}
+            %     \item GPA: 3.9/4.0 (\href{https://example.com}{a link to somewhere})
+            %     \item 
+            % \end{highlights}
         \end{onecolentry}
 
         % \vspace{0.20 cm}
@@ -276,66 +371,20 @@
         % \end{onecolentry}
 
     
-    \section{Experience}
-
-
-
+    \section{Featured Projects and Publications}
         
         \begin{twocolentry}{
-        \textit{Cupertino, CA}    
-            
-        \textit{June 2005 – Aug 2007}}
-            \textbf{Software Engineer}
-            
-            \textit{Apple}
-        \end{twocolentry}
-
-        \vspace{0.10 cm}
-        \begin{onecolentry}
-            \begin{highlights}
-                \item Reduced time to render user buddy lists by 75\% by implementing a prediction algorithm
-                \item Integrated iChat with Spotlight Search by creating a tool to extract metadata from saved chat transcripts and provide metadata to a system-wide search database
-                \item Redesigned chat file format and implemented backward compatibility for search
-            \end{highlights}
-        \end{onecolentry}
-
-
-        \vspace{0.2 cm}
-
-        \begin{twocolentry}{
-        \textit{Redmond, WA}    
-            
-        \textit{June 2003 – Aug 2003}}
-            \textbf{Software Engineer Intern}
-            
-            \textit{Microsoft}
-        \end{twocolentry}
-
-        \vspace{0.10 cm}
-        \begin{onecolentry}
-            \begin{highlights}
-                \item Designed a UI for the VS open file switcher (Ctrl-Tab) and extended it to tool windows
-                \item Created a service to provide gradient across VS and VS add-ins, optimizing its performance via caching
-                \item Built an app to compute the similarity of all methods in a codebase, reducing the time from $\mathcal{O}(n^2)$ to $\mathcal{O}(n \log n)$
-                \item Created a test case generation tool that creates random XML docs from XML Schema
-                \item Automated the extraction and processing of large datasets from legacy systems using SQL and Perl scripts
-            \end{highlights}
-        \end{onecolentry}
-
-    \section{Projects}
-        
-        \begin{twocolentry}{
-            
-            
-        \textit{\href{https://github.com/UTokyo-FieldPhenomics-Lab/EasyIDP}{github.com/UTokyo-FieldPhenomics-Lab/EasyIDP}}}
+            \textit{\href{https://github.com/UTokyo-FieldPhenomics-Lab/EasyIDP}{github repo}}}
             \textbf{EasyIDP}
         \end{twocolentry}
-
+        
         \vspace{0.10 cm}
         \begin{onecolentry}
+            \textit{A handy tool for dealing with region of interest (ROI) on the image reconstruction (Metashape \& Pix4D) outputs, mainly in agriculture applications.}
+
             \begin{highlights}
-                \item A handy tool for dealing with region of interest (ROI) on the image reconstruction (Metashape \& Pix4D) outputs, mainly in agriculture applications.
-                \item \textbf{Tools Used}: Python, PyPi, Readthedocs, \textbf{Citations}: 35, \textbf{Github stars}: 47
+                \item \textbf{Publication}: \fullcite{wang_easyidp_2021}； \textbf{Citations}: 35; \textbf{Github stars}: 47.
+                % \item \textbf{Tools Used}: Python, PyPi, Readthedocs; .
             \end{highlights}
         \end{onecolentry}
 
@@ -343,17 +392,17 @@
         \vspace{0.2 cm}
 
         \begin{twocolentry}{
-            
-            
-        \textit{\href{https://github.com/sinaatalay/rendercv}{github.com/name/repo}}}
-            \textbf{Synchronized Desktop Calendar}
+            \textit{\href{https://www.uav-hirap.org}{uav-hirap.org}}}
+            \textbf{UAV-HiRAP platform}
         \end{twocolentry}
 
         \vspace{0.10 cm}
         \begin{onecolentry}
+            \textit{Unmanned Aerial Vehicles - High Resolution imagery Analysis Platform (UAV-HiRAP), is an open-source, web-based platform which provides service for image classification (maintenance suspended).}
+            
             \begin{highlights}
-                \item Developed a desktop calendar with globally shared and synchronized calendars, allowing users to schedule meetings with other users
-                \item Tools Used: C\#, .NET, SQL, XML
+                \item \textbf{Publication}: \fullcite{wang_landscape_2019}；\textbf{Citations}: 40.
+                % \item \textbf{Tools Used}: Python, Flask, Bootstrap, Nginx; 
             \end{highlights}
         \end{onecolentry}
 
@@ -361,44 +410,54 @@
         \vspace{0.2 cm}
 
         \begin{twocolentry}{
-            
-            
-        \textit{2002}}
-            \textbf{Custom Operating System}
+            \textit{\href{https://github.com/UTokyo-FieldPhenomics-Lab/UAVbroccoli}{github repo}}}
+            \textbf{Broccoli harvest date prediction}
         \end{twocolentry}
 
         \vspace{0.10 cm}
         \begin{onecolentry}
             \begin{highlights}
-                \item Built a UNIX-style OS with a scheduler, file system, text editor, and calculator
-                \item Tools Used: C
+                \item \textbf{Publication}: \fullcite{wang_dronebased_2023}；\textbf{Citations}: 7.
+                \item Achievement reported by \href{https://www.eurekalert.org/news-releases/1003639}{EurekAlert!}, \href{https://www.nikkei.com/article/DGXZRSP661800_Y3A900C2000000/}{日本日経新聞}, and \href{https://www.bjnews.com.cn/detail/1698978347129712.html}{新京报}
             \end{highlights}
         \end{onecolentry}
 
     
     \section{Publications}
+        \nocite{*}
 
+        \vspace{0.10 cm}
+        \textbf{\textit{Book Chapters}} (\thebookchapcount\ entries)
+        \printbibliography[type=incollection, heading=none] % 重置编号
 
+        \vspace{0.10 cm}
+        \textbf{\textit{Journal articles}} (\thejournalcount\ entries)
+        \printbibliography[type=article, heading=none] % 重置编号
 
+        \vspace{0.10 cm}
+        \textbf{\textit{Conference proceedings}} (\theconfcount\ entries)
+        \printbibliography[type=report, heading=none] % 重置编号
         
-        \begin{samepage}
-            \begin{twocolentry}{
-                Jan 2004
-            }
-                \textbf{3D Finite Element Analysis of No-Insulation Coils}
+        % \begin{samepage}
+        %     \begin{twocolentry}{
+        %         Jan 2004
+        %     }
+        %         \textbf{3D Finite Element Analysis of No-Insulation Coils}
 
-                \vspace{0.10 cm}
+        %         \vspace{0.10 cm}
 
-                \mbox{Frodo Baggins}, \mbox{\textbf{\textit{John Doe}}}, \mbox{Samwise Gamgee}
-            \end{twocolentry}
+        %         \mbox{Frodo Baggins}, \mbox{\textbf{\textit{John Doe}}}, \mbox{Samwise Gamgee}
+        %     \end{twocolentry}
 
 
-            \vspace{0.10 cm}
+        %     \vspace{0.10 cm}
 
-            \begin{onecolentry}
-        \href{https://doi.org/10.1109/TASC.2023.3340648}{10.1109/TASC.2023.3340648}
-            \end{onecolentry}
-        \end{samepage}
+        %     \begin{onecolentry}
+        % \href{https://doi.org/10.1109/TASC.2023.3340648}{10.1109/TASC.2023.3340648}
+        %     \end{onecolentry}
+        % \end{samepage}
+
+
 
 
 
