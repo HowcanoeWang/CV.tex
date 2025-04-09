@@ -7,12 +7,43 @@
     "latex-workshop.latex.recipe.default": "lastUsed",
     "latex-workshop.latex.recipes": [
         {
+            // 用于需要编辑biblatex
             "name": "pdflatex -> biber -> pdflatex*2",
             "tools": [
               "pdflatex",
               "biber",
               "pdflatex",
               "pdflatex"  // 确保交叉引用解析
+            ]
+        },
+        {
+            // 用于需要编辑biblatex
+            "name": "xelatex -> biber -> xelatex*2",
+            "tools": [
+              "xelatex",
+              "biber",
+              "xelatex",
+              "xelatex"  // 确保交叉引用解析
+            ]
+        },
+        {
+            // 用于需要编译natbib
+            "name": "xelatex -> bibtex -> xelatex*2",
+            "tools": [
+                "xelatex",
+                "bibtex",
+                "xelatex",
+                "xelatex"
+            ]
+        },
+        {
+            // 用于需要编译natbib
+            "name": "pdflatex -> bibtex -> pdflatex*2",
+            "tools": [
+                "pdflatex",
+                "bibtex",
+                "pdflatex",
+                "pdflatex"
             ]
         },
         {
@@ -44,24 +75,6 @@
             "tools": [
                 "latexmk"
             ]
-        },
-        {
-            "name": "xelatex -> bibtex -> xelatex*2",
-            "tools": [
-                "xelatex",
-                "bibtex",
-                "xelatex",
-                "xelatex"
-            ]
-        },
-        {
-            "name": "pdflatex -> bibtex -> pdflatex*2",
-            "tools": [
-                "pdflatex",
-                "bibtex",
-                "pdflatex",
-                "pdflatex"
-            ]
         }
     ],
     // 生成ファイルを現在のディレクトリに吐き出す
@@ -88,6 +101,7 @@
                 "-synctex=1",
                 "-interaction=nonstopmode",
                 "-file-line-error",
+                "-output-directory=./out",  // 指定输出到项目下的out目录
                 "%DOCFILE%"
             ]
         },
